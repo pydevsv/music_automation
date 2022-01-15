@@ -1,0 +1,23 @@
+$trim($replace(%album%,(Original Motion Picture Soundtrack),))
+$trim($replace(%album%,- EP,))
+$trim($replace(%album%,(Original Soundtrack),))
+$trim($replace(%album%,[Original Motion Picture Soundtrack],))
+$trim($replace(%album%,(Original Music Soundtrack),))
+$trim($replace(%album%,[Original Soundtrack],))
+
+
+
+
+
+file name
+
+$lower(%title% (%album% - %year%))
+
+
+
+
+
+
+
+
+
