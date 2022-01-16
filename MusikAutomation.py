@@ -1,47 +1,70 @@
 import os, shutil
-import eyed3
-# import tinytag
+import eyed3, hashlib
+import sqlite3
 
-# pending_folder = r'/media/user28/disk/Songs/SpotifySongs/Pending'
+conn = sqlite3.connect("songs_db.db")
+cur = conn.cursor()
 
-# for file in os.listdir(pending_folder):
-#     dct = {}
-#     file_path = os.path.join(pending_folder, file)
-#     print(file_path)
+try:
+    cur.execute('CREATE TABLE songs (title text, album text, size integer, provider text, hash text PRIMARY KEY)')
+except:
+    pass
 
-#     dct["gaana_id"] = os.path.splitext(file)[0]
-#     dct["size"] = os.stat(file_path).st_size
-#     dct["md5"] = hashlib.md5(open(file_path).read()).hexdigest()
-#     md5_and_id(file_path, dct)
-#     if os.path.exists(file_path):
-#         try:
-#             tag = TinyTag.get(file_path)
-#             if tag.title is not None:
-#                 dct["title"] = tag.title.lower()
-#             else:
-#                 dct["title"] = tag.title
-#             if tag.album is not None:
-#                 dct["album"] = tag.album.lower()
-#             else:
-#                 dct["album"] = tag.album
+def audio_info(path, provider):
+    info = dict()
+    
+    audio=eyed3.load(path)
+    if audio is None: return None
+    if audio.tag.album:
+        info["album"] = audio.tag.album.lower()
+    if audio.tag.title:
+        info["title"] = audio.tag.title.lower()
+    if os.path.exists(path):
+        info["size"] = os.path.getsize(path)
+        info["hash"] = hashlib.md5(open(path, 'rb').read()).hexdigest()
+    info["provider"] = provider
+    return(info)
 
-#             for k in dct.keys():
-#                 dct[k] = str(dct[k])
-#             print "[+] TinyTag File Read"
-#             title_album(file_path, dct)
-#         except:
-#             print "[-] File Read Error"
-#     if os.path.exists(file_path):
-#         print "[+] File Move To Final"
-#         shutil.move(file_path, os.path.join(folder, "final"))
+spotify_path = "D:\Songs\Spotify_Songs"
+gaana_path = "D:\Songs\Gaana_Songs"
+
+spotify_path_new = os.path.join(spotify_path, "New_Songs")
+gaana_path_new = os.path.join(gaana_path, "New_Songs")
+
+for file in os.listdir(gaana_path_new):
+    file_path = os.path.join(gaana_path_new, file)
+    song_info = audio_info(file_path, "gaana")
+
+    #check for hash
+    cur.execute(f'select * from songs where hash = "{song_info["hash"]}"')
+    row = cur.fetchone()
+    if row is not None:
+        # os.remove(file_path)
+        print(f'[-] hash match, removing file --> {os.path.basename(file_path)}')
+        continue
+    
+    #check for title and album
+    query = f'''select * from songs where title = '{song_info["title"]}' and album = '{song_info["album"]}' '''
+    cur.execute(query)
+    row = cur.fetchone()
+    if row is not None:
+        # os.remove(file_path)
+        print(f'[-] title/album match, removing file --> {os.path.basename(file_path)}')
+
+
+#         query = f'''Insert Into songs({",".join(song_info.keys())}) Values {tuple(song_info.values())}'''
+#         cur.execute(query)
+#     else:
+#         print(ret)
 # conn.commit()
 
+for file in os.listdir(spotify_path_new):
+    file_path = os.path.join(spotify_path_new, file)
+    # print(audio_info(file_path, "spotify"))
 
 
 
-
-
-
+exit()
 
 
 
