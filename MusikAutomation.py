@@ -2,17 +2,21 @@ import os, shutil
 import eyed3, hashlib
 import sqlite3
 
-conn = sqlite3.connect("songs_db.db")
+conn = sqlite3.connect("songs.db")
 cur = conn.cursor()
+base_path = "/media/user/data/Songs"
 
 try:
-    cur.execute('CREATE TABLE songs (title text, album text, size integer, provider text, hash text PRIMARY KEY)')
+    cur.execute('CREATE TABLE all_downloads (title text, album text, size integer, provider text, hash text PRIMARY KEY)')
+except:
+    pass
+try:
+    cur.execute('CREATE TABLE final (title text, album text, size integer, provider text, hash text PRIMARY KEY)')
 except:
     pass
 
 def audio_info(path, provider):
     info = dict()
-    
     audio=eyed3.load(path)
     if audio is None: return None
     if audio.tag.album:
@@ -25,31 +29,47 @@ def audio_info(path, provider):
     info["provider"] = provider
     return(info)
 
-spotify_path = "D:\Songs\Spotify_Songs"
-gaana_path = "D:\Songs\Gaana_Songs"
+spotify_path = os.path.join(base_path, "Spotify")
+spotify_path_new = os.path.join(spotify_path, "New")
 
-spotify_path_new = os.path.join(spotify_path, "New_Songs")
-gaana_path_new = os.path.join(gaana_path, "New_Songs")
+gaana_path = os.path.join(base_path, "Gaana")
+gaana_path_new = os.path.join(gaana_path, "New")
 
-for file in os.listdir(gaana_path_new):
-    file_path = os.path.join(gaana_path_new, file)
-    song_info = audio_info(file_path, "gaana")
-
+for file in os.listdir(spotify_path_new):
+    file_path = os.path.join(spotify_path_new, file)
+    song_info = audio_info(file_path, "spotify")
+    if song_info is None:continue
+    # print(song_info)
     #check for hash
-    cur.execute(f'select * from songs where hash = "{song_info["hash"]}"')
-    row = cur.fetchone()
-    if row is not None:
-        # os.remove(file_path)
-        print(f'[-] hash match, removing file --> {os.path.basename(file_path)}')
-        continue
+    try:
+        query = f'''select * from all_downloads where hash = '{song_info["hash"]}' '''
+        # print(query)
+        cur.execute(query)
+        row = cur.fetchone()
+        if row is not None:
+            os.remove(file_path)
+            print(f'[-] hash match, removing file --> {os.path.basename(file_path)}')
+            continue
+        else:
+            query = f'''Insert Into all_downloads({",".join(song_info.keys())}) Values {tuple(song_info.values())}'''
+            # print(query)
+            cur.execute(query)
+            shutil.move(file_path,os.path.join(spotify_path, "Pending", os.path.basename(file_path)))
+            print(f'[+] hash mismatch, adding file --> {os.path.basename(file_path)}')
+    except sqlite3.OperationalError:
+        print(f'[*] error, moving file --> {os.path.basename(file_path)}')
+        shutil.move(file_path,os.path.join(spotify_path, "Error", os.path.basename(file_path)))
+        conn.commit()
+conn.commit()
     
-    #check for title and album
-    query = f'''select * from songs where title = '{song_info["title"]}' and album = '{song_info["album"]}' '''
-    cur.execute(query)
-    row = cur.fetchone()
-    if row is not None:
-        # os.remove(file_path)
-        print(f'[-] title/album match, removing file --> {os.path.basename(file_path)}')
+    # #check for title and album
+    # query = f'''select * from all_downloads where title = '{song_info["title"]}' and album = '{song_info["album"]}' '''
+    # print(query)
+    # cur.execute(query)
+    # row = cur.fetchone()
+    # if row is not None:
+    #     # os.remove(file_path)
+    #     print(f'[-] title/album match, removing file --> {os.path.basename(file_path)}')
 
 
 #         query = f'''Insert Into songs({",".join(song_info.keys())}) Values {tuple(song_info.values())}'''
@@ -58,8 +78,8 @@ for file in os.listdir(gaana_path_new):
 #         print(ret)
 # conn.commit()
 
-for file in os.listdir(spotify_path_new):
-    file_path = os.path.join(spotify_path_new, file)
+# for file in os.listdir(spotify_path_new):
+#     file_path = os.path.join(spotify_path_new, file)
     # print(audio_info(file_path, "spotify"))
 
 
