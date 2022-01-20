@@ -12,12 +12,3 @@ $trim($replace(%album%,[Original Soundtrack],))
 file name
 
 $lower(%title% (%album% - %year%))
-
-
-
-
-
-
-
-
-
