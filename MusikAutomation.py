@@ -8,7 +8,7 @@ import Functionalities
 conn = sqlite3.connect("songs.db")
 cur = conn.cursor()
 
-base_path = "/media/user/data/Songs"
+base_path = "C:\\Users\\main\\Documents\\Songs"
 
 spotify_path = os.path.join(base_path, "Spotify")
 spotify_path_new = os.path.join(spotify_path, "New")
@@ -29,9 +29,9 @@ try:
 except:
     pass
 
-providers = ["Spotify", "Gaana"]
+providers = ["Spotify"]
 ProcessNew.process(providers, conn, base_path)
-ProcessPending.process(providers, conn, base_path)
+# ProcessPending.process(providers, conn, base_path)
 
 
 

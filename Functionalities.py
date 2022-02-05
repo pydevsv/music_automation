@@ -17,8 +17,8 @@ from tinytag import TinyTag
 
 def audio_info(path, provider):
     info = dict()
-    audio = TinyTag.get(path)
-    # print(audio)
+    try:audio = TinyTag.get(path)
+    except:return None
     if audio.title is None:return None
     if audio.album is not None:
         info["album"] = audio.album.lower()
@@ -31,4 +31,6 @@ def audio_info(path, provider):
     return(info)
 
 
-# {"album": null, "albumartist": null, "artist": null, "audio_offset": null, "bitrate": null, "channels": null, "comment": null, "composer": null, "disc": null, "disc_total": null, "duration": null, "extra": {}, "filesize": 0, "genre": null, "samplerate": null, "title": null, "track": null, "track_total": null, "year": null}
+# {"album": "Howrah Bridge", "albumartist": null, "artist": "Asha Bhosle", "audio_offset": 25323, "bitrate": 320, "channels": 2, "comment": null, "composer": null, 
+# "disc": "1", "disc_total": null, "duration": 251.9728, "extra": {}, "filesize": 10104363, "genre": null, "samplerate": 48000, "title": "Aaiye Meharban", 
+# "track": "2", "track_total": null, "year": null}
