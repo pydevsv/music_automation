@@ -27,6 +27,7 @@ def audio_info(path, provider):
     info["size"] = audio.filesize
     info["hash"] = hashlib.md5(open(path, 'rb').read()).hexdigest()
     info["provider"] = provider
+    info["ext"] = os.path.splitext(path)[1]
     return(info)
 
 

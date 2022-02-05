@@ -1,7 +1,7 @@
 import os, shutil
 import hashlib
 import sqlite3
-import ProcessNew
+import ProcessNew, ProcessPending
 import Functionalities
 
 
@@ -31,6 +31,8 @@ except:
 
 providers = ["Spotify", "Gaana"]
 ProcessNew.process(providers, conn, base_path)
+ProcessPending.process(providers, conn, base_path)
+
 
 
 exit()

@@ -1,5 +1,4 @@
 """Create a connection to Gmail and do something with the results
-
 References:
 http://www.voidynullness.net/blog/2013/07/25/gmail-email-with-python-via-imap/
 and
