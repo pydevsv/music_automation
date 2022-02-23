@@ -1,7 +1,7 @@
 import os, shutil
 import hashlib
 import sqlite3
-import ProcessNew, ProcessPending
+import ProcessNew, ProcessPending, ProcessTaggs, FirstRun
 import Functionalities
 
 
@@ -20,20 +20,26 @@ gaana_path_final = os.path.join(gaana_path, "Final")
 
 final_path = os.path.join(base_path, "Final", "Songs")
 
+
 try:
-    cur.execute('CREATE TABLE all_downloads (title text, album text, size integer, provider text, hash text PRIMARY KEY)')
+    cur.execute('CREATE TABLE all_downloads (title text, album text, size integer, provider text, hash text PRIMARY KEY, priority integer, ext text)')
 except:
     pass
 try:
-    cur.execute('CREATE TABLE final (title text, album text, size integer, provider text, ext text, hash text PRIMARY KEY)')
+    cur.execute('CREATE TABLE final (title text, album text, size integer, provider text, ext text, hash text PRIMARY KEY, priority integer)')
+except:
+    pass
+try:
+    cur.execute('CREATE TABLE gaana_raw (gaana_id integer, size integer, provider text, hash text PRIMARY KEY)')
 except:
     pass
 
-providers = ["Spotify"]
+
+providers = ["Gaana"]
+# FirstRun.processFinal(conn,base_path)
+# FirstRun.processRaw(conn,base_path)
 ProcessNew.process(providers, conn, base_path)
-# ProcessPending.process(providers, conn, base_path)
-
-
+# ProcessTaggs.process_tags(providers, conn, base_path)
 
 exit()
 
@@ -150,17 +156,21 @@ for songs in list(set(source_list) & set(backup_list)):
 
 
 
-
-# add new songs in final
-# for file in os.listdir(spotify_path_final):
-#     file_path = os.path.join(spotify_path_final, file)
-#     song_info = Functionalities.audio_info(file_path, "gaana")
+# # add new songs in final
+# folder_path =os.path.join(base_path, "Songs", "Songs")
+# for file in os.listdir(folder_path):
+#     file_path = os.path.join(folder_path, file)
+#     print(file_path)
+#     song_info = Functionalities.audio_info(file_path, "Spotify")
+#     # print(song_info)
     
 #     if song_info is None:continue
 #     song_info["ext"] = os.path.splitext(file_path)[1]
 #     # print(song_info)
 #     query = f'''Insert Into final({",".join(song_info.keys())}) Values {tuple(song_info.values())}'''
-#     print(query)
+#     # print(query)
 #     cur.execute(query)
-#     os.remove(file_path)
 #     conn.commit()
+
+
+# exit()

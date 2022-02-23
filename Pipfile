@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 eyed3 = "*"
 tinytag = "*"
+mp3-tagger = "*"
 
 [dev-packages]
 

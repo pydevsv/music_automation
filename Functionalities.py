@@ -21,14 +21,27 @@ def audio_info(path, provider):
     except:return None
     if audio.title is None:return None
     if audio.album is not None:
-        info["album"] = audio.album.lower()
+        info["album"] = audio.album
     if audio.title is not None:
-        info["title"] = audio.title.lower()
+        info["title"] = audio.title
     info["size"] = audio.filesize
     info["hash"] = hashlib.md5(open(path, 'rb').read()).hexdigest()
-    info["provider"] = provider
+    
     info["ext"] = os.path.splitext(path)[1]
+    if provider is None:
+        info["provider"] = audio.comment
+    else:
+        info["provider"] = provider
+    if provider == "Gaana":
+        info["priority"] = 3
     return(info)
+
+def fileList(source):
+    files = []
+    for root, dirnames, filenames in os.walk(source):
+        for filename in filenames:
+            files.append(os.path.join(root, filename))
+    return files
 
 
 # {"album": "Howrah Bridge", "albumartist": null, "artist": "Asha Bhosle", "audio_offset": 25323, "bitrate": 320, "channels": 2, "comment": null, "composer": null, 
