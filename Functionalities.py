@@ -19,6 +19,7 @@ def audio_info(path, provider):
     info = dict()
     try:audio = TinyTag.get(path)
     except:return None
+    # print(audio)
     if audio.title is None:return None
     if audio.album is not None:
         info["album"] = audio.album
@@ -28,12 +29,16 @@ def audio_info(path, provider):
     info["hash"] = hashlib.md5(open(path, 'rb').read()).hexdigest()
     
     info["ext"] = os.path.splitext(path)[1]
-    if provider is None:
+    if info["ext"] == ".flac":
+        info["provider"] = "None"
+    elif provider is None:
         info["provider"] = audio.comment
     else:
         info["provider"] = provider
-    if provider == "Gaana":
-        info["priority"] = 3
+    if provider == "Gaana" or info["provider"] == "Gaana":
+        info["priority"] = 2
+    elif provider == "Spotify" or info["provider"] == "Spotify":
+        info["priority"] = 2 
     return(info)
 
 def fileList(source):

@@ -4,14 +4,20 @@ import hashlib
 
 
 def processFinal(conn, base_path):
+    cur = conn.cursor()
+    cur.execute("DELETE FROM final")
+    conn.commit()
     folder_path = os.path.join(base_path, "Final", "Songs")
     files = fileList(folder_path)
     for file_path in files:
+        print(f'[+] adding file --> {os.path.basename(file_path)}')
         song_info = audio_info(file_path, None)
         if song_info is None:continue
-        print(song_info)
-        if song_info["provider"] == "Spotify":
-            shutil.move(file_path,os.path.join(base_path, "Final", "Songs", "Spotify", os.path.basename(file_path)))
+        # print(song_info)
+        query = f'''Insert Into final({",".join(song_info.keys())}) Values {tuple(song_info.values())}'''
+        # print(query)
+        cur.execute(query)
+    conn.commit()
 
 
 

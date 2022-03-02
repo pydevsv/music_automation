@@ -9,17 +9,16 @@ def process(providers, conn, base_path):
         for file in os.listdir(folder_path):
             file_path = os.path.join(folder_path, file)
             song_info = audio_info(file_path, provider)
-            query = f'''select * from all_downloads where title = '{song_info["title"]}' and album = '{song_info["album"]}' '''
-            print("*"*100)
-            print(query)
+            song_info["title"] = song_info["title"].replace("'", "''")
+            song_info["album"] = song_info["album"].replace("'", "''")
+            query = f'''select * from final where title = '{song_info["title"]}' and album = '{song_info["album"]}' and ext = '{song_info["ext"]}' '''
             cur.execute(query)
-            row = cur.fetchone()
-            print(row)
-            print(song_info)
-
-            if row is None:
-                # print("[+] not match")
-                pass
-            else:
-
-                print("[-] file match")
+            query_res = cur.fetchone()
+            # print("-"*100)
+            # print(query_res)
+            # print(song_info)
+            if query_res is None:
+                 print(f'[+] title/album not match --> {os.path.basename(file_path)}')
+            elif song_info["size"] < query_res[2]:
+                print(f'[-] title/album match size small, deleting file --> {os.path.basename(file_path)}')
+                os.remove(file_path)
