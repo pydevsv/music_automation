@@ -1,4 +1,4 @@
-from Functionalities import audio_info
+from Functionalities import audio_info, fileList
 import os,shutil, sqlite3
 
 def process(providers, conn, base_path):
@@ -6,7 +6,8 @@ def process(providers, conn, base_path):
     for provider in providers:
         folder_path = os.path.join(base_path, provider, "Pending")
         print(folder_path)
-        for file in os.listdir(folder_path):
+        files = fileList(folder_path)
+        for file in files:
             file_path = os.path.join(folder_path, file)
             song_info = audio_info(file_path, provider)
             song_info["title"] = song_info["title"].replace("'", "''")

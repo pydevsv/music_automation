@@ -8,8 +8,8 @@ import Functionalities
 conn = sqlite3.connect("songs.db")
 cur = conn.cursor()
 
-# base_path = "C:\\Users\\main\\Documents\\Songs"
-base_path = "/media/user/data/Songs"
+base_path = "C:\\Users\\main\\Documents\\Songs"
+# base_path = "/media/user/data/Songs"
 
 spotify_path = os.path.join(base_path, "Spotify")
 spotify_path_new = os.path.join(spotify_path, "New")
@@ -37,11 +37,12 @@ except:
 
 
 providers = ["Gaana"]
-FirstRun.processFinal(conn,base_path)
+# FirstRun.processFinal(conn,base_path)
 # FirstRun.processRaw(conn,base_path)
 
+# 
+ProcessNew.process(providers, conn, base_path)
 # ProcessPending.process(providers, conn, base_path)
-# ProcessNew.process(providers, conn, base_path)
 # ProcessTaggs.process_tags(providers, conn, base_path)
 
 exit()
