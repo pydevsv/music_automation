@@ -1,11 +1,3 @@
-"""Create a connection to Gmail and do something with the results
-References:
-http://www.voidynullness.net/blog/2013/07/25/gmail-email-with-python-via-imap/
-and
-https://yuji.wordpress.com/2011/06/22/python-imaplib-imap-example-with-gmail/
-"""
-__author__ = 'abought'
-
 from asyncio import exceptions
 import email.parser
 import imaplib

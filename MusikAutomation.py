@@ -41,8 +41,8 @@ providers = ["Gaana"]
 # FirstRun.processRaw(conn,base_path)
 
 # 
-ProcessNew.process(providers, conn, base_path)
-# ProcessPending.process(providers, conn, base_path)
+# ProcessNew.process(providers, conn, base_path)
+ProcessPending.process(providers, conn, base_path)
 # ProcessTaggs.process_tags(providers, conn, base_path)
 
 exit()
